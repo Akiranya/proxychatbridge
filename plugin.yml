@@ -1,0 +1,5 @@
+name: BungeeChatBridge
+main: com.rngservers.bungeechatbridge.spigot.Main
+description: Sync server chat across the network
+version: 1.0
+author: RandomUnknown

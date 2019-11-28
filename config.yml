@@ -1,0 +1,12 @@
+configVersion: 1
+
+settings:
+  defaultPrefix: "&8[&7$server&8]"
+  titleCase: true
+
+servers:
+  hub:
+    prefix: "&8[&bH&8]"
+    removeFromStart: 0 # Remove the start of the string, useful to remove [G] and [L] chats
+  factions:
+    prefix: "&8[&2F&8]"
