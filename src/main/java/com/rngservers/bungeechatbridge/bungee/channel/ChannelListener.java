@@ -6,8 +6,6 @@ import java.io.IOException;
 
 import com.rngservers.bungeechatbridge.bungee.chat.ChatManager;
 
-import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -42,8 +40,7 @@ public class ChannelListener implements Listener {
 			String display = channel.readUTF();
 			String format = channel.readUTF();
 			String message = channel.readUTF();
-			ProxiedPlayer player = BungeeCord.getInstance().getPlayer(user);
-			chat.syncChat(player, display, format, message);
+			chat.syncChat(user, display, format, message);
 		}
 	}
 }

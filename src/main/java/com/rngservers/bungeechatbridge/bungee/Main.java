@@ -13,7 +13,7 @@ public class Main extends Plugin {
 		ConfigManager config = new ConfigManager();
 		config.createConfig();
 		config.loadConfig();
-		ChatManager chat = new ChatManager(config);
+		ChatManager chat = new ChatManager(this, config);
 		getProxy().getPluginManager().registerListener(this, new ChannelListener(chat));
         getProxy().getPluginManager().registerCommand(this, new BCBReload(config));
 	}

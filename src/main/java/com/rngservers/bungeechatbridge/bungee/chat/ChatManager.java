@@ -2,22 +2,25 @@ package com.rngservers.bungeechatbridge.bungee.chat;
 
 import java.util.Map.Entry;
 
+import com.rngservers.bungeechatbridge.bungee.Main;
 import com.rngservers.bungeechatbridge.bungee.config.ConfigManager;
 
-import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 public class ChatManager {
+	private Main plugin;
 	private ConfigManager config;
 
-	public ChatManager(ConfigManager config) {
+	public ChatManager(Main plugin, ConfigManager config) {
+		this.plugin = plugin;
 		this.config = config;
 	}
 
-	public void syncChat(ProxiedPlayer player, String display, String format, String message) {
+	public void syncChat(String user, String display, String format, String message) {
+		ProxiedPlayer player = plugin.getProxy().getPlayer(user);
 		String server = player.getServer().getInfo().getName();
 		String serverName = server;
 
@@ -39,11 +42,11 @@ public class ChatManager {
 		String formatedMessage = format.replace("%1$s", display).replace("%2$s", message);
 		String fullMessage = prefix + formatedMessage;
 
-		for (Entry<String, ServerInfo> servers : BungeeCord.getInstance().getServers().entrySet()) {
+		for (Entry<String, ServerInfo> servers : plugin.getProxy().getServers().entrySet()) {
 			if (servers.getKey().equals(server)) {
 				continue;
 			}
-			for (ProxiedPlayer players : BungeeCord.getInstance().getServerInfo(servers.getKey()).getPlayers()) {
+			for (ProxiedPlayer players : plugin.getProxy().getServerInfo(servers.getKey()).getPlayers()) {
 				players.sendMessage(TextComponent.fromLegacyText(fullMessage));
 			}
 		}

@@ -106,7 +106,7 @@ feature that (1) displays an appropriate copyright notice, and (2)
 tells the user that there is no warranty for the work (except to the
 extent that warranties are provided), that licensees may convey the
 work under this License, and how to view a copy of this License.  If
-the interface presents a list of user commands or options, such as a
+the interface presents a list of user com.rngservers.removeentity.commands or options, such as a
 menu, a prominent item in the list meets this criterion.
 
   1. Source Code.
@@ -450,10 +450,10 @@ receives a license from the original licensors, to run, modify and
 propagate that work, subject to this License.  You are not responsible
 for enforcing compliance by third parties with this License.
 
-  An "entity transaction" is a transaction transferring control of an
+  An "com.rngservers.removeentity.entity transaction" is a transaction transferring control of an
 organization, or substantially all assets of one, or subdividing an
 organization, or merging organizations.  If propagation of a covered
-work results from an entity transaction, each party to that
+work results from an com.rngservers.removeentity.entity transaction, each party to that
 transaction who receives a copy of the work also receives whatever
 licenses to the work the party's predecessor in interest had or could
 give under the previous paragraph, plus a right to possession of the
@@ -657,8 +657,8 @@ notice like this when it starts in an interactive mode:
     This is free software, and you are welcome to redistribute it
     under certain conditions; type `show c' for details.
 
-The hypothetical commands `show w' and `show c' should show the appropriate
-parts of the General Public License.  Of course, your program's commands
+The hypothetical com.rngservers.removeentity.commands `show w' and `show c' should show the appropriate
+parts of the General Public License.  Of course, your program's com.rngservers.removeentity.commands
 might be different; for a GUI interface, you would use an "about box".
 
   You should also get your employer (if you work as a programmer) or school,
