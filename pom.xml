@@ -4,11 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.rngservers</groupId>
+    <groupId>com.ranull</groupId>
     <artifactId>BungeeChatBridge</artifactId>
     <version>1.2</version>
     <name>BungeeChatBridge</name>
     <description>Sync server chat across the network.</description>
+
+    <developers>
+        <developer>
+            <name>Ranull</name>
+            <url>https://gitlab.com/ranull/minecraft/bungeechatbridge</url>
+        </developer>
+    </developers>
 
     <properties>
         <java.version>1.8</java.version>
@@ -63,7 +70,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.15-R0.1-SNAPSHOT</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

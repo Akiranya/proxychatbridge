@@ -1,5 +1,5 @@
 name: ${project.name}
 description: ${project.description}
 version: ${project.version}
-main: com.rngservers.bungeechatbridge.spigot.Main
-author: RandomUnknown
+main: com.ranull.bungeechatbridge.spigot.BungeeChatBridge
+author: Ranull
