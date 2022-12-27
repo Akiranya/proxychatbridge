@@ -1,12 +1,23 @@
-configVersion: 1
+config-version: 1
 
 settings:
-  defaultPrefix: "&8[&7$server&8]"
-  titleCase: true
+  prefix: "&f<&f%server%&f> " # Default prefix, set to "" to disable.
+  title-case: true # Should the server name be title-case.
 
-servers:
-  hub:
-    prefix: "&8[&bH&8]"
-    removeFromStart: 0 # Remove the start of the string, useful to remove [G] and [L] chats
-  factions:
-    prefix: "&8[&2F&8]"
+  # Replace messages being sent to external servers using regex, this does not affect message on the source server.
+  replace-text:
+  #"_": " " # Replace underscore with space.
+  #"-": " " # Replace dash with space.
+  #"(?i)gg ez": "It's past my bedtime. Please don't tell my mommy." # Example text override.
+
+  # Server config, more can be added, or defaults can be removed.
+  servers:
+    hub1:
+      group: "hub" # If group is defined and not set to global, only servers within this group will see messages.
+      prefix: "&f<&7Hub&f> " # Set to "" To Disable
+    hub2:
+      group: "hub" # If group is defined and not set to global, only servers within this group will see messages.
+      prefix: "&f<&7Hub&f> " # Set to "" To Disable
+    factions:
+      group: "global" # If group is defined and not set to global, only servers within this group will see messages.
+      prefix: "&f<&2Factions&f> " # Set to "" To Disable

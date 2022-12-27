@@ -1,0 +1,11 @@
+{
+  "id": "${project.artifactId}",
+  "name": "${project.name}",
+  "version": "${project.version}",
+  "description": "${project.description}",
+  "authors": [
+    "Ranull"
+  ],
+  "dependencies": [],
+  "main": "com.ranull.proxychatbridge.velocity.ProxyChatBridge"
+}

@@ -1,5 +1,6 @@
 name: ${project.name}
 description: ${project.description}
 version: ${project.version}
-main: com.ranull.bungeechatbridge.spigot.BungeeChatBridge
+main: com.ranull.proxychatbridge.bukkit.ProxyChatBridge
 author: Ranull
+api-version: 1.13

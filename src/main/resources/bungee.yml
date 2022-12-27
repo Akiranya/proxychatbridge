@@ -1,5 +1,5 @@
 name: ${project.name}
 description: ${project.description}
 version: ${project.version}
-main: com.ranull.bungeechatbridge.bungee.BungeeChatBridge
+main: com.ranull.proxychatbridge.bungee.ProxyChatBridge
 author: Ranull
