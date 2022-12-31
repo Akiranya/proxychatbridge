@@ -3,7 +3,8 @@ package com.ranull.proxychatbridge.bukkit.manager;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.ranull.proxychatbridge.bukkit.ProxyChatBridge;
-import com.ranull.proxychatbridge.bukkit.event.ExternalChatEvent;
+import com.ranull.proxychatbridge.bukkit.event.ExternalChatReceiveEvent;
+import com.ranull.proxychatbridge.bukkit.event.ExternalChatSendEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -16,32 +17,49 @@ public class ChatManager {
         this.plugin = plugin;
     }
 
-    public void sendExternalMessage(String serverName, UUID uuid, String displayName, String format, String message) {
-        ExternalChatEvent externalChatEvent = new ExternalChatEvent(serverName, uuid, displayName, format, message);
+    public void sendMessage(UUID uuid, String name, String format, String message, Player player) {
+        ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(uuid, name, format, message);
 
-        plugin.getServer().getPluginManager().callEvent(externalChatEvent);
+        plugin.getServer().getPluginManager().callEvent(externalChatSendEvent);
 
-        if (!externalChatEvent.isCancelled()) {
-            String messageFormatted = externalChatEvent.getFormat().replace("%1$s",
-                    externalChatEvent.getDisplayName()).replace("%2$s",
-                    externalChatEvent.getMessage());
-
-            plugin.getLogger().info(ChatColor.stripColor(messageFormatted));
-
-            for (Player player : plugin.getServer().getOnlinePlayers()) {
-                player.sendMessage(messageFormatted);
-            }
+        if (!externalChatSendEvent.isCancelled()) {
+            sendChatData(externalChatSendEvent.getUUID(), externalChatSendEvent.getName(),
+                    externalChatSendEvent.getFormat(), externalChatSendEvent.getMessage(), player);
         }
     }
 
+    public void sendMessageToPlayers(UUID uuid, String name, String format, String message, String source) {
+        String finalSource = !source.equals("") ? source : null;
+        ;
+
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            ExternalChatReceiveEvent externalChatReceiveEvent = new ExternalChatReceiveEvent(uuid, name, format,
+                    message, finalSource);
+
+            plugin.getServer().getPluginManager().callEvent(externalChatReceiveEvent);
+
+            if (!externalChatReceiveEvent.isCancelled()) {
+                String messageFormatted = externalChatReceiveEvent.getFormat().replace("%1$s",
+                        externalChatReceiveEvent.getName()).replace("%2$s",
+                        externalChatReceiveEvent.getMessage());
+
+                plugin.getLogger().info(ChatColor.stripColor(messageFormatted));
+
+                for (Player player : plugin.getServer().getOnlinePlayers()) {
+                    player.sendMessage(messageFormatted);
+                }
+            }
+        });
+    }
+
     @SuppressWarnings("UnstableApiUsage")
-    public void sendChatData(Player player, String format, String message) {
+    private void sendChatData(UUID uuid, String name, String format, String message, Player player) {
         ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
 
         byteArrayDataOutput.writeUTF("ProxyChatBridge");
         byteArrayDataOutput.writeUTF("Message");
-        byteArrayDataOutput.writeUTF(player.getUniqueId().toString());
-        byteArrayDataOutput.writeUTF(player.getDisplayName());
+        byteArrayDataOutput.writeUTF(uuid != null ? uuid.toString() : "");
+        byteArrayDataOutput.writeUTF(name);
         byteArrayDataOutput.writeUTF(format);
         byteArrayDataOutput.writeUTF(message);
 

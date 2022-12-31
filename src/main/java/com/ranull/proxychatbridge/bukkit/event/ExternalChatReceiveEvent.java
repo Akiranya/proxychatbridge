@@ -1,59 +1,74 @@
 package com.ranull.proxychatbridge.bukkit.event;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class ExternalChatEvent extends Event implements Cancellable {
+public class ExternalChatReceiveEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
-    private final String serverName;
     private final UUID uuid;
-    private String displayName;
+    private final String source;
+    private String name;
     private String format;
     private String message;
     private boolean cancel;
 
-    public ExternalChatEvent(String serverName, UUID uuid, String displayName, String format, String message) {
-        this.serverName = serverName;
+    public ExternalChatReceiveEvent(UUID uuid, String name, String format, String message, String source) {
+        super(true);
+
         this.uuid = uuid;
-        this.displayName = displayName;
+        this.name = name;
         this.format = format;
         this.message = message;
+        this.source = source;
     }
 
-    public String getServerName() {
-        return serverName;
-    }
-
+    @Nullable
     public UUID getUUID() {
         return uuid;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    @Nullable
+    public Player getPlayer() {
+        return uuid != null ? Bukkit.getPlayer(uuid) : null;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    @NotNull
+    public String getName() {
+        return name;
     }
 
+    public void setName(@NotNull String name) {
+        this.name = name;
+    }
+
+    @NotNull
     public String getFormat() {
         return format;
     }
 
-    public void setFormat(String format) {
+    public void setFormat(@NotNull String format) {
         this.format = format;
     }
 
+    @NotNull
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(@NotNull String message) {
         this.message = message;
+    }
+
+    @Nullable
+    public String getSource() {
+        return source;
     }
 
     @NotNull

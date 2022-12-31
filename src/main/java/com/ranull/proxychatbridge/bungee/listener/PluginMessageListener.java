@@ -1,6 +1,9 @@
 package com.ranull.proxychatbridge.bungee.listener;
 
 import com.ranull.proxychatbridge.bungee.ProxyChatBridge;
+import com.ranull.proxychatbridge.bungee.event.ExternalChatReceiveEvent;
+import com.ranull.proxychatbridge.common.util.UUIDUtil;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -19,20 +22,32 @@ public class PluginMessageListener implements Listener {
     }
 
     @EventHandler
-    public void onPluginMessage(PluginMessageEvent event) throws IOException {
+    public void onPluginMessage(PluginMessageEvent event) {
         if (event.getTag().equals("BungeeCord") && event.getSender() instanceof Server) {
             DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(event.getData()));
 
-            if (dataInputStream.readUTF().equals("ProxyChatBridge") && dataInputStream.readUTF().equals("Message")) {
-                try {
-                    UUID uuid = UUID.fromString(dataInputStream.readUTF());
-                    String displayName = dataInputStream.readUTF();
+            try {
+                if (dataInputStream.readUTF().equals("ProxyChatBridge") && dataInputStream.readUTF().equals("Message")) {
+                    ServerInfo serverInfo = ((Server) event.getSender()).getInfo();
+                    UUID uuid = UUIDUtil.getUUID(dataInputStream.readUTF());
+                    String name = dataInputStream.readUTF();
                     String format = dataInputStream.readUTF();
                     String message = dataInputStream.readUTF();
+                    String group = plugin.getChatManager().getGroup(serverInfo.getName());
 
-                    plugin.getChatManager().bridgeChat(uuid, displayName, format, message);
-                } catch (IllegalArgumentException ignored) {
+                    if (!group.equals("")) {
+                        ExternalChatReceiveEvent externalChatReceiveEvent = new ExternalChatReceiveEvent(uuid, name,
+                                format, message, group, serverInfo.getName(), serverInfo);
+
+                        plugin.getProxy().getPluginManager().callEvent(externalChatReceiveEvent);
+
+                        if (!externalChatReceiveEvent.isCancelled()) {
+                            plugin.getChatManager().bridgeServerChat(uuid, name, format, message, serverInfo);
+                        }
+                    }
                 }
+            } catch (IOException exception) {
+                exception.printStackTrace();
             }
         }
     }

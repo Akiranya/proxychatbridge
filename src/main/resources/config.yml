@@ -2,22 +2,24 @@ config-version: 1
 
 settings:
   prefix: "&f<&f%server%&f> " # Default prefix, set to "" to disable.
+  group: "global" # Default group, if undefined in servers section, this will be chosen, set to "" to disable default global chat.
   title-case: true # Should the server name be title-case.
 
   # Replace messages being sent to external servers using regex, this does not affect message on the source server.
   replace-text:
-  #"_": " " # Replace underscore with space.
-  #"-": " " # Replace dash with space.
-  #"(?i)gg ez": "It's past my bedtime. Please don't tell my mommy." # Example text override.
+    "": "" # Only here to keep indentation formatting.
+    #"_": " " # Replace underscore with space.
+    #"-": " " # Replace dash with space.
+    #"(?i)gg ez": "It's past my bedtime. Please don't tell my mommy." # Example text override.
 
   # Server config, more can be added, or defaults can be removed.
-  servers:
-    hub1:
+  servers: # remove _example to enable the examples.
+    hub1_example:
+      prefix: "&f<&7Hub&f> " # Set to "" to disable.
       group: "hub" # If group is defined and not set to global, only servers within this group will see messages.
-      prefix: "&f<&7Hub&f> " # Set to "" To Disable
-    hub2:
+    hub2_example:
+      prefix: "&f<&7Hub&f> " # Set to "" to disable.
       group: "hub" # If group is defined and not set to global, only servers within this group will see messages.
-      prefix: "&f<&7Hub&f> " # Set to "" To Disable
-    factions:
-      group: "global" # If group is defined and not set to global, only servers within this group will see messages.
-      prefix: "&f<&2Factions&f> " # Set to "" To Disable
+    factions_example:
+      prefix: "&f<&2Factions&f> " # Set to "" to disable.
+      group: "factions" # If group is defined and not set to global, only servers within this group will see messages.

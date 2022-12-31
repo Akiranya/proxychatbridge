@@ -27,7 +27,7 @@ public class ConfigManager {
     }
 
     public void saveConfig() {
-        if (plugin.getDataFolder().exists() || plugin.getDataFolder().mkdir()) {
+        if (plugin.getDataFolder().exists() || plugin.getDataFolder().mkdirs()) {
             File configFile = new File(plugin.getDataFolder(), "config.yml");
 
             if (!configFile.exists()) {

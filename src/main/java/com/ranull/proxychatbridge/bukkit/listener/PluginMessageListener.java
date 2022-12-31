@@ -1,6 +1,7 @@
 package com.ranull.proxychatbridge.bukkit.listener;
 
 import com.ranull.proxychatbridge.bukkit.ProxyChatBridge;
+import com.ranull.proxychatbridge.common.util.UUIDUtil;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,13 +23,13 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
 
         try {
             if (dataInputStream.readUTF().equals("ProxyChatBridge") && dataInputStream.readUTF().equals("Message")) {
-                String serverName = dataInputStream.readUTF();
-                UUID uuid = UUID.fromString(dataInputStream.readUTF());
-                String displayName = dataInputStream.readUTF();
+                String source = dataInputStream.readUTF();
+                UUID uuid = UUIDUtil.getUUID(dataInputStream.readUTF());
+                String name = dataInputStream.readUTF();
                 String format = dataInputStream.readUTF();
                 String message = dataInputStream.readUTF();
 
-                plugin.getChatManager().sendExternalMessage(serverName, uuid, displayName, format, message);
+                plugin.getChatManager().sendMessageToPlayers(uuid, name, format, message, source);
             }
         } catch (IOException exception) {
             exception.printStackTrace();

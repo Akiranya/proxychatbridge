@@ -1,6 +1,7 @@
 package com.ranull.proxychatbridge.bukkit.listener;
 
 import com.ranull.proxychatbridge.bukkit.ProxyChatBridge;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -14,9 +15,12 @@ public class AsyncPlayerChatListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
+    public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         if (plugin.getServer().getOnlinePlayers().size() == event.getRecipients().size()) {
-            plugin.getChatManager().sendChatData(event.getPlayer(), event.getFormat(), event.getMessage());
+            Player player = event.getPlayer();
+
+            plugin.getChatManager().sendMessage(player.getUniqueId(), player.getDisplayName(),
+                    event.getFormat(), event.getMessage(), player);
         }
     }
 }

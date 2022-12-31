@@ -3,11 +3,10 @@ package com.ranull.proxychatbridge.bungee.manager;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.ranull.proxychatbridge.bungee.ProxyChatBridge;
-import com.ranull.proxychatbridge.bungee.event.ExternalChatEvent;
+import com.ranull.proxychatbridge.bungee.event.ExternalChatSendEvent;
 import com.ranull.proxychatbridge.common.util.StringUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,41 +20,56 @@ public class ChatManager {
         this.plugin = plugin;
     }
 
-    public void bridgeChat(UUID uuid, String displayName, String format, String message) {
-        ProxiedPlayer proxiedPlayer = plugin.getProxy().getPlayer(uuid);
-        String serverName = proxiedPlayer.getServer().getInfo().getName();
-        String serverNameFormatted = replaceText(serverName);
+    public void bridgeServerChat(UUID uuid, String name, String format, String message, ServerInfo serverInfo) {
+        String serverName = replaceText(serverInfo.getName());
 
         if (plugin.getConfig().getBoolean("settings.title-case", true)) {
-            serverNameFormatted = StringUtil.toTitleCase(serverNameFormatted);
+            serverName = StringUtil.toTitleCase(serverName);
         }
 
-        String prefix = plugin.getConfig().getString("settings.servers." + serverName + ".prefix", "");
+        String prefix = plugin.getConfig().getString("settings.servers." + serverInfo.getName() + ".prefix", "");
 
         if (prefix.equals("")) {
             prefix = plugin.getConfig().getString("settings.prefix", "");
         }
 
-        format = replaceText(prefix.replace("%server%", serverNameFormatted).replace("&", "§")
-                + ChatColor.RESET + format);
+        format = replaceText(prefix.replace("%server%", serverName).replace("&", "§") + ChatColor.RESET + format);
         message = replaceText(message);
-        String group = plugin.getConfig().getString("settings.servers." + serverName + ".group", "global");
+        String group = getGroup(serverInfo.getName());
 
-        for (Entry<String, ServerInfo> servers : plugin.getProxy().getServers().entrySet()) {
-            String externalGroup = plugin.getConfig().getString("settings.servers." + servers.getKey()
-                    + ".group", "global");
+        for (Entry<String, ServerInfo> server : plugin.getProxy().getServers().entrySet()) {
+            String externalGroup = getGroup(server.getKey());
 
             if ((externalGroup.equals("global") || externalGroup.equals(group))
-                    && !servers.getKey().equals(serverName)) {
-                ExternalChatEvent externalChatEvent = new ExternalChatEvent(uuid, displayName, format, message,
-                        group, proxiedPlayer, servers.getValue());
+                    && !server.getKey().equals(serverInfo.getName())) {
+                ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(uuid, name, format, message,
+                        group, serverInfo.getName(), server.getValue());
 
-                plugin.getProxy().getPluginManager().callEvent(externalChatEvent);
+                plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
 
-                if (!externalChatEvent.isCancelled()) {
-                    sendChatData(externalChatEvent.getServerInfo(), serverName, externalChatEvent.getProxiedPlayer(),
-                            externalChatEvent.getDisplayName(), externalChatEvent.getFormat(),
-                            externalChatEvent.getMessage());
+                if (!externalChatSendEvent.isCancelled()) {
+                    sendChatData(externalChatSendEvent.getUUID(), externalChatSendEvent.getName(),
+                            externalChatSendEvent.getFormat(), externalChatSendEvent.getMessage(),
+                            "server:" + serverInfo.getName(), externalChatSendEvent.getDestination());
+                }
+            }
+        }
+    }
+
+    public void sendMessage(String name, String format, String message, String group, String source) {
+        for (Entry<String, ServerInfo> server : plugin.getProxy().getServers().entrySet()) {
+            String externalGroup = getGroup(server.getKey());
+
+            if ((externalGroup.equals("global") || externalGroup.equals(group))) {
+                ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(null, name, format, message,
+                        group, source, server.getValue());
+
+                plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
+
+                if (!externalChatSendEvent.isCancelled()) {
+                    sendChatData(externalChatSendEvent.getUUID(), externalChatSendEvent.getName(),
+                            externalChatSendEvent.getFormat(), externalChatSendEvent.getMessage(),
+                            source, externalChatSendEvent.getDestination());
                 }
             }
         }
@@ -71,19 +85,24 @@ public class ChatManager {
         return StringUtil.replaceAll(string, stringMap);
     }
 
+    public String getGroup(String serverName) {
+        return plugin.getConfig().getString("settings.servers." + serverName + ".group",
+                plugin.getConfig().getString("settings.group", "global"));
+    }
+
     @SuppressWarnings("UnstableApiUsage")
-    private void sendChatData(ServerInfo server, String serverName, ProxiedPlayer player, String displayName,
-                              String format, String message) {
+    private void sendChatData(UUID uuid, String name, String format, String message, String source,
+                              ServerInfo destination) {
         ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
 
         byteArrayDataOutput.writeUTF("ProxyChatBridge");
         byteArrayDataOutput.writeUTF("Message");
-        byteArrayDataOutput.writeUTF(serverName);
-        byteArrayDataOutput.writeUTF(player.getUniqueId().toString());
-        byteArrayDataOutput.writeUTF(displayName);
+        byteArrayDataOutput.writeUTF(source != null ? source : "");
+        byteArrayDataOutput.writeUTF(uuid != null ? uuid.toString() : "");
+        byteArrayDataOutput.writeUTF(name);
         byteArrayDataOutput.writeUTF(format);
         byteArrayDataOutput.writeUTF(message);
 
-        server.sendData("BungeeCord", byteArrayDataOutput.toByteArray());
+        destination.sendData("BungeeCord", byteArrayDataOutput.toByteArray());
     }
 }

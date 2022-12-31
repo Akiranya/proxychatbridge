@@ -33,7 +33,7 @@ public class ProxyChatBridgeCommand extends Command {
                         + ChatColor.RESET + "Reloaded config file.");
             } else {
                 commandSender.sendMessage(ChatColor.WHITE + "✉" + ChatColor.DARK_GRAY + " » "
-                        + ChatColor.RESET + "No Permission.");
+                        + ChatColor.RESET + "No permission.");
             }
         }
     }
