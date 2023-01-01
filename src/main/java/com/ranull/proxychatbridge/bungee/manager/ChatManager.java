@@ -38,19 +38,20 @@ public class ChatManager {
         String group = getGroup(serverInfo.getName());
 
         for (Entry<String, ServerInfo> server : plugin.getProxy().getServers().entrySet()) {
-            String externalGroup = getGroup(server.getKey());
+            if (!server.getValue().getPlayers().isEmpty() && !server.getKey().equals(serverInfo.getName())) {
+                String externalGroup = getGroup(server.getKey());
 
-            if ((externalGroup.equals("global") || externalGroup.equals(group))
-                    && !server.getKey().equals(serverInfo.getName())) {
-                ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(uuid, name, format, message,
-                        group, serverInfo.getName(), server.getValue());
+                if ((externalGroup.equals("global") || externalGroup.equals(group))) {
+                    ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(uuid, name, format, message,
+                            group, serverInfo.getName(), server.getValue());
 
-                plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
+                    plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
 
-                if (!externalChatSendEvent.isCancelled()) {
-                    sendChatData(externalChatSendEvent.getUUID(), externalChatSendEvent.getName(),
-                            externalChatSendEvent.getFormat(), externalChatSendEvent.getMessage(),
-                            "server:" + serverInfo.getName(), externalChatSendEvent.getDestination());
+                    if (!externalChatSendEvent.isCancelled()) {
+                        sendChatData(externalChatSendEvent.getUUID(), externalChatSendEvent.getName(),
+                                externalChatSendEvent.getFormat(), externalChatSendEvent.getMessage(),
+                                "server:" + serverInfo.getName(), externalChatSendEvent.getDestination());
+                    }
                 }
             }
         }
