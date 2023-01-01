@@ -8,6 +8,9 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import org.bstats.bungeecord.Metrics;
 
+import java.util.List;
+import java.util.UUID;
+
 public class ProxyChatBridge extends Plugin {
     private static ProxyChatBridge instance;
     private ConfigManager configManager;
@@ -22,7 +25,16 @@ public class ProxyChatBridge extends Plugin {
     }
 
     public static void sendMessage(String name, String format, String message, String group, String source) {
-        instance.getChatManager().sendMessage(name, format, message, group, source);
+        sendMessage(null, name, format, message, group, source);
+    }
+
+    public static void sendMessage(UUID uuid, String name, String format, String message, String group, String source) {
+        sendMessage(uuid, name, format, message, group, source, null);
+    }
+
+    public static void sendMessage(UUID uuid, String name, String format, String message, String group, String source,
+                                   List<UUID> uuidList) {
+        instance.getChatManager().sendMessage(uuid, name, format, message, group, source, uuidList);
     }
 
     @Override

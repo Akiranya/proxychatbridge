@@ -8,6 +8,7 @@ import com.ranull.proxychatbridge.bukkit.event.ExternalChatSendEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ChatManager {
@@ -29,8 +30,12 @@ public class ChatManager {
     }
 
     public void sendMessageToPlayers(UUID uuid, String name, String format, String message, String source) {
+        sendMessageToPlayers(uuid, name, format, message, source, null);
+    }
+
+    public void sendMessageToPlayers(UUID uuid, String name, String format, String message, String source,
+                                     List<UUID> uuidList) {
         String finalSource = !source.equals("") ? source : null;
-        ;
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             ExternalChatReceiveEvent externalChatReceiveEvent = new ExternalChatReceiveEvent(uuid, name, format,
@@ -45,8 +50,18 @@ public class ChatManager {
 
                 plugin.getLogger().info(ChatColor.stripColor(messageFormatted));
 
-                for (Player player : plugin.getServer().getOnlinePlayers()) {
-                    player.sendMessage(messageFormatted);
+                if (uuidList == null) {
+                    for (Player player : plugin.getServer().getOnlinePlayers()) {
+                        player.sendMessage(messageFormatted);
+                    }
+                } else {
+                    for (UUID uuidPlayer : uuidList) {
+                        Player player = plugin.getServer().getPlayer(uuidPlayer);
+
+                        if (player != null) {
+                            player.sendMessage(messageFormatted);
+                        }
+                    }
                 }
             }
         });

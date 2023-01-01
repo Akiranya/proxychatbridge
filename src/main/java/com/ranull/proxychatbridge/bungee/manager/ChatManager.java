@@ -8,10 +8,8 @@ import com.ranull.proxychatbridge.common.util.StringUtil;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.config.ServerInfo;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 public class ChatManager {
     private final ProxyChatBridge plugin;
@@ -57,20 +55,23 @@ public class ChatManager {
         }
     }
 
-    public void sendMessage(String name, String format, String message, String group, String source) {
+    public void sendMessage(UUID uuid, String name, String format, String message, String group, String source,
+                            List<UUID> uuidList) {
         for (Entry<String, ServerInfo> server : plugin.getProxy().getServers().entrySet()) {
-            String externalGroup = getGroup(server.getKey());
+            if (!server.getValue().getPlayers().isEmpty()) {
+                String externalGroup = getGroup(server.getKey());
 
-            if ((externalGroup.equals("global") || externalGroup.equals(group))) {
-                ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(null, name, format, message,
-                        group, source, server.getValue());
+                if ((externalGroup.equals("global") || externalGroup.equals(group))) {
+                    ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(uuid, name, format, message,
+                            group, source, server.getValue());
 
-                plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
+                    plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
 
-                if (!externalChatSendEvent.isCancelled()) {
-                    sendChatData(externalChatSendEvent.getUUID(), externalChatSendEvent.getName(),
-                            externalChatSendEvent.getFormat(), externalChatSendEvent.getMessage(),
-                            source, externalChatSendEvent.getDestination());
+                    if (!externalChatSendEvent.isCancelled()) {
+                        sendChatData(externalChatSendEvent.getUUID(), externalChatSendEvent.getName(),
+                                externalChatSendEvent.getFormat(), externalChatSendEvent.getMessage(),
+                                source, externalChatSendEvent.getDestination(), uuidList);
+                    }
                 }
             }
         }
@@ -91,9 +92,14 @@ public class ChatManager {
                 plugin.getConfig().getString("settings.group", "global"));
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     private void sendChatData(UUID uuid, String name, String format, String message, String source,
                               ServerInfo destination) {
+        sendChatData(uuid, name, format, message, source, destination, null);
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private void sendChatData(UUID uuid, String name, String format, String message, String source,
+                              ServerInfo destination, List<UUID> uuidList) {
         ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
 
         byteArrayDataOutput.writeUTF("ProxyChatBridge");
@@ -103,6 +109,16 @@ public class ChatManager {
         byteArrayDataOutput.writeUTF(name);
         byteArrayDataOutput.writeUTF(format);
         byteArrayDataOutput.writeUTF(message);
+
+        if (uuidList != null) {
+            List<String> stringList = new ArrayList<>();
+
+            for (UUID uuidPlayer : uuidList) {
+                stringList.add(uuidPlayer.toString());
+            }
+
+            byteArrayDataOutput.writeUTF(String.join(",", stringList));
+        }
 
         destination.sendData("BungeeCord", byteArrayDataOutput.toByteArray());
     }
