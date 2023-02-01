@@ -1,8 +1,10 @@
 package com.ranull.proxychatbridge.bukkit;
 
+import com.ranull.proxychatbridge.bukkit.command.ProxyChatBridgeBukkitBroadcastCommand;
 import com.ranull.proxychatbridge.bukkit.listener.AsyncPlayerChatListener;
 import com.ranull.proxychatbridge.bukkit.listener.PluginMessageListener;
 import com.ranull.proxychatbridge.bukkit.manager.ChatManager;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,6 +26,7 @@ public class ProxyChatBridge extends JavaPlugin {
 
         registerListeners();
         registerChannels();
+        registerCommands();
     }
 
     @Override
@@ -48,6 +51,15 @@ public class ProxyChatBridge extends JavaPlugin {
     private void unregisterChannels() {
         getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         getServer().getMessenger().unregisterIncomingPluginChannel(this);
+    }
+
+    private void registerCommands() {
+        PluginCommand proxyChatBridgeBroadcastPluginCommand = getCommand("proxychatbridgebukkitbroadcast");
+        PluginCommand sitPluginCommand = getCommand("sit");
+
+        if (proxyChatBridgeBroadcastPluginCommand != null) {
+            proxyChatBridgeBroadcastPluginCommand.setExecutor(new ProxyChatBridgeBukkitBroadcastCommand(this));
+        }
     }
 
     public ChatManager getChatManager() {

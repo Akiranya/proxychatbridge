@@ -27,23 +27,32 @@ public class PluginMessageListener implements Listener {
             DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(event.getData()));
 
             try {
-                if (dataInputStream.readUTF().equals("ProxyChatBridge") && dataInputStream.readUTF().equals("Message")) {
+                if (dataInputStream.readUTF().equals("ProxyChatBridge")) {
                     ServerInfo serverInfo = ((Server) event.getSender()).getInfo();
-                    UUID uuid = UUIDUtil.getUUID(dataInputStream.readUTF());
-                    String name = dataInputStream.readUTF();
-                    String format = dataInputStream.readUTF();
-                    String message = dataInputStream.readUTF();
-                    String group = plugin.getChatManager().getGroup(serverInfo.getName());
+                    String type = dataInputStream.readUTF();
 
-                    if (!group.equals("")) {
-                        ExternalChatReceiveEvent externalChatReceiveEvent = new ExternalChatReceiveEvent(uuid, name,
-                                format, message, group, serverInfo.getName(), serverInfo);
+                    if (type.equals("Message")) {
+                        UUID uuid = UUIDUtil.getUUID(dataInputStream.readUTF());
+                        String name = dataInputStream.readUTF();
+                        String format = dataInputStream.readUTF();
+                        String message = dataInputStream.readUTF();
+                        String group = plugin.getChatManager().getGroup(serverInfo.getName());
 
-                        plugin.getProxy().getPluginManager().callEvent(externalChatReceiveEvent);
+                        if (!group.equals("")) {
+                            ExternalChatReceiveEvent externalChatReceiveEvent = new ExternalChatReceiveEvent(uuid, name,
+                                    format, message, group, serverInfo.getName(), serverInfo);
 
-                        if (!externalChatReceiveEvent.isCancelled()) {
-                            plugin.getChatManager().bridgeServerChat(uuid, name, format, message, serverInfo);
+                            plugin.getProxy().getPluginManager().callEvent(externalChatReceiveEvent);
+
+                            if (!externalChatReceiveEvent.isCancelled()) {
+                                plugin.getChatManager().bridgeServerChat(uuid, name, format, message, serverInfo);
+                            }
                         }
+                    } else if (type.equals("Broadcast")) {
+                        String group = dataInputStream.readUTF();
+                        String message = dataInputStream.readUTF();
+
+                        plugin.getChatManager().broadcast(group, message);
                     }
                 }
             } catch (IOException exception) {

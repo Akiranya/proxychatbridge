@@ -29,6 +29,11 @@ public class ExternalChatReceiveEvent extends Event implements Cancellable {
         this.source = source;
     }
 
+    @NotNull
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
+
     @Nullable
     public UUID getUUID() {
         return uuid;
