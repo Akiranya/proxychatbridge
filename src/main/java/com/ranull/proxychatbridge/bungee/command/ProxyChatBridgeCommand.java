@@ -13,12 +13,13 @@ public class ProxyChatBridgeCommand extends Command {
         this.plugin = plugin;
     }
 
+    @SuppressWarnings("deprecation")
     public void execute(CommandSender commandSender, String[] args) {
         if (args.length == 0) {
             commandSender.sendMessage(ChatColor.WHITE + "✉" + ChatColor.DARK_GRAY + " » " + ChatColor.WHITE
                     + "ProxyChatBridge " + ChatColor.DARK_GRAY + "v" + plugin.getDescription().getVersion());
-            commandSender.sendMessage(
-                    ChatColor.GRAY + "/pcb " + ChatColor.DARK_GRAY + "-" + ChatColor.RESET + " Plugin info");
+            commandSender.sendMessage(ChatColor.GRAY + "/pcb " + ChatColor.DARK_GRAY + "-" + ChatColor.RESET
+                    + " Plugin info");
 
             if (commandSender.hasPermission("proxychatbridge.reload")) {
                 commandSender.sendMessage(ChatColor.GRAY + "/pcb reload " + ChatColor.DARK_GRAY + "-" + ChatColor.RESET

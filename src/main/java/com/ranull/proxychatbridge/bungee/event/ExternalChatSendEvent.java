@@ -8,27 +8,28 @@ import net.md_5.bungee.api.plugin.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ExternalChatSendEvent extends Event implements Cancellable {
     private final UUID uuid;
     private final String group;
     private final String source;
-    private final ServerInfo destination;
+    private final List<ServerInfo> destinationList;
     private String name;
     private String format;
     private String message;
     private boolean cancel;
 
     public ExternalChatSendEvent(UUID uuid, String name, String format, String message, String group, String source,
-                                 ServerInfo destination) {
+                                 List<ServerInfo> destinationList) {
         this.uuid = uuid;
         this.name = name;
         this.format = format;
         this.message = message;
         this.group = group;
         this.source = source;
-        this.destination = destination;
+        this.destinationList = destinationList;
     }
 
     @Nullable
@@ -85,8 +86,8 @@ public class ExternalChatSendEvent extends Event implements Cancellable {
     }
 
     @NotNull
-    public ServerInfo getDestination() {
-        return destination;
+    public List<ServerInfo> getDestinationList() {
+        return destinationList;
     }
 
     @Override

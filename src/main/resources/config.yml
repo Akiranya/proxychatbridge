@@ -1,25 +1,25 @@
-config-version: 1
-
-settings:
+default:
   prefix: "&f<&f%server%&f> " # Default prefix, set to "" to disable.
   group: "global" # Default group, if undefined in servers section, this will be chosen, set to "" to disable default global chat.
-  title-case: true # Should the server name be title-case.
 
-  # Replace messages being sent to external servers using regex, this does not affect message on the source server.
-  replace-text:
+text:
+  title: true # Should the server name be title-case.
+
+  replace: # Replace messages being sent to external servers using regex, this does not affect message on the source server.
     "": "" # Only here to keep indentation formatting.
     #"_": " " # Replace underscore with space.
     #"-": " " # Replace dash with space.
     #"(?i)gg ez": "It's past my bedtime. Please don't tell my mommy." # Example text override.
 
-  # Server config, more can be added, or defaults can be removed.
-  servers: # remove _example to enable the examples.
-    hub1_example:
-      prefix: "&f<&7Hub&f> " # Set to "" to disable.
-      group: "hub" # If group is defined and not set to global, only servers within this group will see messages.
-    hub2_example:
-      prefix: "&f<&7Hub&f> " # Set to "" to disable.
-      group: "hub" # If group is defined and not set to global, only servers within this group will see messages.
-    factions_example:
-      prefix: "&f<&2Factions&f> " # Set to "" to disable.
-      group: "factions" # If group is defined and not set to global, only servers within this group will see messages.
+servers: # Servers, more can be added, or defaults can be removed.
+  hub1_example: # Server name.
+    prefix: "&f<&7Hub&f> " # Set to "" to disable.
+    group: "hub" # If group is defined and not set to global, only servers within this group will see messages.
+
+  hub2_example: # Server name.
+    prefix: "&f<&7Hub&f> " # Set to "" to disable.
+    group: "hub" # If group is defined and not set to global, only servers within this group will see messages.
+
+  factions_example: # Server name.
+    prefix: "&f<&2Factions&f> " # Set to "" to disable.
+    group: "factions" # If group is defined and not set to global, only servers within this group will see messages.

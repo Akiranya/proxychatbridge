@@ -21,35 +21,54 @@ public class ChatManager {
     public void bridgeServerChat(UUID uuid, String name, String format, String message, ServerInfo serverInfo) {
         String serverName = replaceText(serverInfo.getName());
 
-        if (plugin.getConfig().getBoolean("settings.title-case", true)) {
+        if (plugin.getConfig().getBoolean("text.title", true)) {
             serverName = StringUtil.toTitleCase(serverName);
         }
 
-        String prefix = plugin.getConfig().getString("settings.servers." + serverInfo.getName() + ".prefix", "");
+        String prefix = plugin.getConfig().getString("servers." + serverInfo.getName() + ".prefix", "");
 
         if (prefix.equals("")) {
-            prefix = plugin.getConfig().getString("settings.prefix", "");
+            prefix = plugin.getConfig().getString("default.prefix", "");
         }
 
         format = replaceText(prefix.replace("%server%", serverName).replace("&", "§") + ChatColor.RESET + format);
         message = replaceText(message);
         String group = getGroup(serverInfo.getName());
 
-        for (Entry<String, ServerInfo> server : plugin.getProxy().getServers().entrySet()) {
-            if (!server.getValue().getPlayers().isEmpty() && !server.getKey().equals(serverInfo.getName())) {
-                String externalGroup = getGroup(server.getKey());
+        for (Entry<String, ServerInfo> entry : plugin.getProxy().getServers().entrySet()) {
+            if (!entry.getValue().getPlayers().isEmpty() && !entry.getKey().equals(serverInfo.getName())) {
+                List<ServerInfo> serverInfoList = new ArrayList<>();
+                String externalGroup = getGroup(entry.getKey());
 
                 if ((externalGroup.equals("global") || externalGroup.equals(group))) {
-                    ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(uuid, name, format, message,
-                            group, serverInfo.getName(), server.getValue());
+                    serverInfoList.add(entry.getValue());
+                }
 
-                    plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
+                ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(uuid, name, format, message,
+                        group, serverInfo.getName(), serverInfoList);
 
-                    if (!externalChatSendEvent.isCancelled()) {
+                plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
+
+                if (!externalChatSendEvent.isCancelled()) {
+                    for (ServerInfo destinationServerInfo : externalChatSendEvent.getDestinationList()) {
                         sendChatData(externalChatSendEvent.getUUID(), externalChatSendEvent.getName(),
                                 externalChatSendEvent.getFormat(), externalChatSendEvent.getMessage(),
-                                "server:" + serverInfo.getName(), externalChatSendEvent.getDestination());
+                                "server:" + serverInfo.getName(), destinationServerInfo);
                     }
+                }
+            }
+        }
+    }
+
+    public void broadcast(String group, String message) {
+        message = replaceText(message);
+
+        for (Entry<String, ServerInfo> entry : plugin.getProxy().getServers().entrySet()) {
+            if (!entry.getValue().getPlayers().isEmpty()) {
+                String externalGroup = getGroup(entry.getKey());
+
+                if ((externalGroup.equals("global") || externalGroup.equals(group))) {
+                    sendBroadcast(message, entry.getValue());
                 }
             }
         }
@@ -57,20 +76,25 @@ public class ChatManager {
 
     public void sendMessage(UUID uuid, String name, String format, String message, String group, String source,
                             List<UUID> uuidList) {
-        for (Entry<String, ServerInfo> server : plugin.getProxy().getServers().entrySet()) {
-            if (!server.getValue().getPlayers().isEmpty()) {
-                String externalGroup = getGroup(server.getKey());
+        for (Entry<String, ServerInfo> entry : plugin.getProxy().getServers().entrySet()) {
+            if (!entry.getValue().getPlayers().isEmpty()) {
+                List<ServerInfo> serverInfoList = new ArrayList<>();
+                String externalGroup = getGroup(entry.getKey());
 
                 if ((externalGroup.equals("global") || externalGroup.equals(group))) {
-                    ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(uuid, name, format, message,
-                            group, source, server.getValue());
+                    serverInfoList.add(entry.getValue());
+                }
 
-                    plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
+                ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(uuid, name, format, message,
+                        group, source, serverInfoList);
 
-                    if (!externalChatSendEvent.isCancelled()) {
+                plugin.getProxy().getPluginManager().callEvent(externalChatSendEvent);
+
+                if (!externalChatSendEvent.isCancelled()) {
+                    for (ServerInfo destinationServerInfo : externalChatSendEvent.getDestinationList()) {
                         sendChatData(externalChatSendEvent.getUUID(), externalChatSendEvent.getName(),
                                 externalChatSendEvent.getFormat(), externalChatSendEvent.getMessage(),
-                                source, externalChatSendEvent.getDestination(), uuidList);
+                                source, destinationServerInfo, uuidList);
                     }
                 }
             }
@@ -80,16 +104,16 @@ public class ChatManager {
     public String replaceText(String string) {
         Map<String, String> stringMap = new HashMap<>();
 
-        for (String key : plugin.getConfig().getSection("settings.replace-text").getKeys()) {
-            stringMap.put(key, plugin.getConfig().getString("settings.replace-text." + key));
+        for (String key : plugin.getConfig().getSection("text.replace").getKeys()) {
+            stringMap.put(key, plugin.getConfig().getString("text.replace." + key));
         }
 
         return StringUtil.replaceAll(string, stringMap);
     }
 
     public String getGroup(String serverName) {
-        return plugin.getConfig().getString("settings.servers." + serverName + ".group",
-                plugin.getConfig().getString("settings.group", "global"));
+        return plugin.getConfig().getString("servers." + serverName + ".group",
+                plugin.getConfig().getString("default.group", "global"));
     }
 
     private void sendChatData(UUID uuid, String name, String format, String message, String source,
@@ -119,6 +143,17 @@ public class ChatManager {
 
             byteArrayDataOutput.writeUTF(String.join(",", stringList));
         }
+
+        destination.sendData("BungeeCord", byteArrayDataOutput.toByteArray());
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    private void sendBroadcast(String message, ServerInfo destination) {
+        ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+
+        byteArrayDataOutput.writeUTF("ProxyChatBridge");
+        byteArrayDataOutput.writeUTF("Broadcast");
+        byteArrayDataOutput.writeUTF(message);
 
         destination.sendData("BungeeCord", byteArrayDataOutput.toByteArray());
     }

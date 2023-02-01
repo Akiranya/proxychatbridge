@@ -25,34 +25,40 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
         DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
 
         try {
-            if (dataInputStream.readUTF().equals("ProxyChatBridge") && dataInputStream.readUTF().equals("Message")) {
-                String source = dataInputStream.readUTF();
-                UUID uuid = UUIDUtil.getUUID(dataInputStream.readUTF());
-                String name = dataInputStream.readUTF();
-                String format = dataInputStream.readUTF();
-                String message = dataInputStream.readUTF();
-                String players;
+            if (dataInputStream.readUTF().equals("ProxyChatBridge")) {
+                String type = dataInputStream.readUTF();
 
-                try {
-                    players = dataInputStream.readUTF();
-                } catch (EOFException ignored) {
-                    players = null;
-                }
+                if (type.equals("Message")) {
+                    String source = dataInputStream.readUTF();
+                    UUID uuid = UUIDUtil.getUUID(dataInputStream.readUTF());
+                    String name = dataInputStream.readUTF();
+                    String format = dataInputStream.readUTF();
+                    String message = dataInputStream.readUTF();
+                    String players;
 
-                if (players == null) {
-                    plugin.getChatManager().sendMessageToPlayers(uuid, name, format, message, source);
-                } else {
-                    List<UUID> uuidList = new ArrayList<>();
-
-                    for (String uuidString : players.split(",")) {
-                        UUID uuidPlayer = UUIDUtil.getUUID(uuidString);
-
-                        if (uuidPlayer != null) {
-                            uuidList.add(uuidPlayer);
-                        }
+                    try {
+                        players = dataInputStream.readUTF();
+                    } catch (EOFException ignored) {
+                        players = null;
                     }
 
-                    plugin.getChatManager().sendMessageToPlayers(uuid, name, format, message, source, uuidList);
+                    if (players == null) {
+                        plugin.getChatManager().sendMessageToPlayers(uuid, name, format, message, source);
+                    } else {
+                        List<UUID> uuidList = new ArrayList<>();
+
+                        for (String uuidString : players.split(",")) {
+                            UUID uuidPlayer = UUIDUtil.getUUID(uuidString);
+
+                            if (uuidPlayer != null) {
+                                uuidList.add(uuidPlayer);
+                            }
+                        }
+
+                        plugin.getChatManager().sendMessageToPlayers(uuid, name, format, message, source, uuidList);
+                    }
+                } else if (type.equals("Broadcast")) {
+                    plugin.getServer().broadcastMessage(dataInputStream.readUTF());
                 }
             }
         } catch (IOException exception) {

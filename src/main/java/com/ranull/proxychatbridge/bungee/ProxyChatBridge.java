@@ -1,12 +1,13 @@
 package com.ranull.proxychatbridge.bungee;
 
+import com.ranull.proxychatbridge.bungee.command.ProxyChatBridgeBungeeBroadcastCommand;
 import com.ranull.proxychatbridge.bungee.command.ProxyChatBridgeCommand;
 import com.ranull.proxychatbridge.bungee.listener.PluginMessageListener;
 import com.ranull.proxychatbridge.bungee.manager.ChatManager;
 import com.ranull.proxychatbridge.bungee.manager.ConfigManager;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
-import org.bstats.bungeecord.Metrics;
+import org.bstats.bungeecord.MetricsLite;
 
 import java.util.List;
 import java.util.UUID;
@@ -55,7 +56,7 @@ public class ProxyChatBridge extends Plugin {
     }
 
     private void registerMetrics() {
-        new Metrics(this, 17238);
+        new MetricsLite(this, 17238);
     }
 
     private void registerChannels() {
@@ -72,6 +73,7 @@ public class ProxyChatBridge extends Plugin {
 
     private void registerCommands() {
         getProxy().getPluginManager().registerCommand(this, new ProxyChatBridgeCommand(this));
+        getProxy().getPluginManager().registerCommand(this, new ProxyChatBridgeBungeeBroadcastCommand(this));
     }
 
     public ChatManager getChatManager() {
