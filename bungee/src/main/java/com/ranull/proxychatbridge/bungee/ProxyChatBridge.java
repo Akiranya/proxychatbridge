@@ -7,7 +7,6 @@ import com.ranull.proxychatbridge.bungee.manager.ChatManager;
 import com.ranull.proxychatbridge.bungee.manager.ConfigManager;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
-import org.bstats.bungeecord.MetricsLite;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +43,6 @@ public class ProxyChatBridge extends Plugin {
         configManager = new ConfigManager(this);
         chatManager = new ChatManager(this);
 
-        registerMetrics();
         registerChannels();
         registerListeners();
         registerCommands();
@@ -53,10 +51,6 @@ public class ProxyChatBridge extends Plugin {
     @Override
     public void onDisable() {
         unregisterChannels();
-    }
-
-    private void registerMetrics() {
-        new MetricsLite(this, 17238);
     }
 
     private void registerChannels() {
