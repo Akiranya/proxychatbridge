@@ -26,16 +26,13 @@ repositories {
         }
     }
     maven("https://jitpack.io") {
-        content {}
+        content {
+            includeGroup("com.github.Moulberry")
+        }
     }
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
         content {
             // includeGroup("me.clip")
-        }
-    }
-    maven("https://repo.opencollab.dev/maven-snapshots/") {
-        content {
-            // includeGroup("org.geysermc.floodgate")
         }
     }
 }
@@ -46,7 +43,7 @@ dependencies {
 
 group = "com.ranull"
 description = "Sync server chat across a network"
-version = "1.4"
+version = "1.5"
 
 java {
     toolchain {
