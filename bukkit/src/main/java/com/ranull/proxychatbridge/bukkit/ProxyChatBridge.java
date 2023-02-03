@@ -1,9 +1,8 @@
 package com.ranull.proxychatbridge.bukkit;
 
-import com.ranull.proxychatbridge.bukkit.listener.AsyncPlayerChatListener;
+import com.ranull.proxychatbridge.bukkit.listener.PlayerChatListener;
 import com.ranull.proxychatbridge.bukkit.listener.PluginMessageListener;
 import com.ranull.proxychatbridge.bukkit.manager.ChatManager;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -26,7 +25,7 @@ public class ProxyChatBridge extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerChatListener(this), this);
     }
 
     private void unregisterListeners() {

@@ -7,10 +7,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public class AsyncPlayerChatListener implements Listener {
+public class PlayerChatListener implements Listener {
     private final ProxyChatBridge plugin;
 
-    public AsyncPlayerChatListener(ProxyChatBridge plugin) {
+    public PlayerChatListener(ProxyChatBridge plugin) {
         this.plugin = plugin;
     }
 
