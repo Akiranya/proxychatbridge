@@ -1,6 +1,5 @@
 package com.ranull.proxychatbridge.bukkit;
 
-import com.ranull.proxychatbridge.bukkit.command.ProxyChatBridgeBukkitBroadcastCommand;
 import com.ranull.proxychatbridge.bukkit.listener.AsyncPlayerChatListener;
 import com.ranull.proxychatbridge.bukkit.listener.PluginMessageListener;
 import com.ranull.proxychatbridge.bukkit.manager.ChatManager;
@@ -45,11 +44,7 @@ public class ProxyChatBridge extends JavaPlugin {
     }
 
     private void registerCommands() {
-        PluginCommand proxyChatBridgeBroadcastPluginCommand = getCommand("proxychatbridgebukkitbroadcast");
 
-        if (proxyChatBridgeBroadcastPluginCommand != null) {
-            proxyChatBridgeBroadcastPluginCommand.setExecutor(new ProxyChatBridgeBukkitBroadcastCommand(this));
-        }
     }
 
     public ChatManager getChatManager() {

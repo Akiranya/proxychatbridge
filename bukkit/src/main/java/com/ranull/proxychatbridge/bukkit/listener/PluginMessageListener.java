@@ -57,12 +57,11 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
 
                         plugin.getChatManager().sendMessageToPlayers(uuid, name, format, message, source, uuidList);
                     }
-                } else if (type.equals("Broadcast")) {
-                    plugin.getServer().broadcastMessage(dataInputStream.readUTF());
                 }
             }
         } catch (IOException exception) {
             exception.printStackTrace();
         }
     }
+
 }

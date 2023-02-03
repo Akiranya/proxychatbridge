@@ -29,16 +29,6 @@ public class ChatManager {
         }
     }
 
-    public void broadcastMessage(String group, String message, Player player) {
-        ExternalChatSendEvent externalChatSendEvent = new ExternalChatSendEvent(null, null, null, message);
-
-        plugin.getServer().getPluginManager().callEvent(externalChatSendEvent);
-
-        if (!externalChatSendEvent.isCancelled()) {
-            sendBroadcastData(group, message, player);
-        }
-    }
-
     public void sendMessageToPlayers(UUID uuid, String name, String format, String message, String source) {
         sendMessageToPlayers(uuid, name, format, message, source, null);
     }
@@ -91,15 +81,4 @@ public class ChatManager {
         player.sendPluginMessage(plugin, "BungeeCord", byteArrayDataOutput.toByteArray());
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    private void sendBroadcastData(String group, String message, Player player) {
-        ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
-
-        byteArrayDataOutput.writeUTF("ProxyChatBridge");
-        byteArrayDataOutput.writeUTF("Broadcast");
-        byteArrayDataOutput.writeUTF(group);
-        byteArrayDataOutput.writeUTF(message);
-
-        player.sendPluginMessage(plugin, "BungeeCord", byteArrayDataOutput.toByteArray());
-    }
 }
