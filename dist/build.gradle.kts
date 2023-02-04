@@ -13,19 +13,21 @@ dependencies {
     runtimeOnly(project(":bukkit"))
     runtimeOnly(project(":bungee"))
     runtimeOnly(project(":velocity"))
+    runtimeOnly("com.github.Moulberry:adventure-binary-serializer:master-SNAPSHOT") {
+        exclude("net.kyori")
+    }
 }
 
+val out = "ProxyChatBridge-${project.version}.jar"
+
 tasks {
-    val out = "ProxyChatBridge-${project.version}.jar"
     assemble {
         dependsOn(shadowJar)
     }
     shadowJar {
-        minimize {
-            exclude(dependency("com.ranull:.*:.*"))
-        }
-        archiveFileName.set("$out.jar")
         archiveClassifier.set("")
+        archiveFileName.set(out)
+        relocate("net.gauntletmc.adventure.serializer.binary", "com.ranull.proxychatbridge.adventure.serializer.binary")
     }
     jar {
         archiveClassifier.set("noshade")

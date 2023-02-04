@@ -4,26 +4,13 @@
 
 plugins {
     id("com.ranull.java-conventions")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 dependencies {
     compileOnly(project(":common"))
+    compileOnly("com.github.Moulberry:adventure-binary-serializer:master-SNAPSHOT")
     compileOnly("com.velocitypowered", "velocity-api", "3.2.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered", "velocity-api", "3.2.0-SNAPSHOT")
-    implementation("com.github.Moulberry:adventure-binary-serializer:master-SNAPSHOT")
-}
-
-tasks {
-    assemble {
-        dependsOn(shadowJar)
-    }
-    shadowJar {
-        relocate("net.gauntletmc.adventure.serializer.binary", "com.ranull.proxychatbridge.lib.adventure.serializer.binary")
-    }
-    jar {
-        archiveClassifier.set("noshade")
-    }
 }
 
 java {

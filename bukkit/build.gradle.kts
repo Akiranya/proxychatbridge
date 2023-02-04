@@ -12,14 +12,17 @@ plugins {
 dependencies {
     compileOnly(project(":common"))
     compileOnly("io.papermc.paper", "paper-api", "1.19.3-R0.1-SNAPSHOT")
+    compileOnly("com.github.Moulberry:adventure-binary-serializer:master-SNAPSHOT")
+    compileOnly("at.helpch:api:1.0-SNAPSHOT")
 }
 
 bukkit {
     main = "com.ranull.proxychatbridge.bukkit.ProxyChatBridge"
-    name = project.name
+    name = "ProxyChatBridge"
     version = "${project.version}"
     apiVersion = "1.19"
     authors = listOf("Nailm", "Ranull")
+    softDepend = listOf("ChatChat")
     permissions {
         register("proxychatbridge.broadcast") {
             description = "Server wide broadcast"
