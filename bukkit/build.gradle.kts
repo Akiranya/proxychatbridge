@@ -24,16 +24,15 @@ bukkit {
     authors = listOf("Nailm", "Ranull")
     softDepend = listOf("ChatChat")
     permissions {
-        register("proxychatbridge.broadcast") {
-            description = "Server wide broadcast"
+        register("proxychatbridge.command") {
+            description = "Access to the ProxyChatBridge-Bukkit commands"
             default = BukkitPluginDescription.Permission.Default.OP
         }
     }
     commands {
-        register("proxychatbridgebukkitbroadcast") {
-            description = "Server wide broadcast"
-            aliases = listOf("pcbbb")
-            usage = "/<command>"
+        register("proxychatbridgebukkit") {
+            description = "The entry to the ProxyChatBridge-Bukkit commands"
+            usage = "/<command> reload"
         }
     }
 }

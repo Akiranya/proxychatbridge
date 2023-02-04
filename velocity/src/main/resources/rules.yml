@@ -1,0 +1,23 @@
+default:
+  format: "[Default] <player> <message>"
+  group: "global"
+
+servers:
+  example:
+    format: "[Rand] <player>: <message>"
+    group: "example"
+  hub:
+    format: "[Hub] <player>: <message>"
+    group: "play"
+  home1:
+    format: "[Home1] <player>: <message>"
+    group: "play"
+  home2:
+    format: "[Home2] <player>: <message>"
+    group: "play"
+  home3:
+    format: "[Home3] <player>: <message>"
+    group: "play"
+  mine1:
+    format: "[Mine1] <player>: <message>"
+    group: "play"
