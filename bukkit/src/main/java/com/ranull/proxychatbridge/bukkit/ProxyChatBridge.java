@@ -10,8 +10,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-
 import static java.util.Objects.requireNonNull;
 
 public class ProxyChatBridge extends JavaPlugin implements PluginMessageListener {
@@ -73,10 +71,12 @@ public class ProxyChatBridge extends JavaPlugin implements PluginMessageListener
     }
 
     @Override public void onPluginMessageReceived(@NotNull final String channel, @NotNull final Player player, final byte @NotNull [] data) {
-        getLogger().info("Received a plugin message!");
-        getLogger().info("  > channel: " + channel);
-        getLogger().info("  > player: " + player.getName());
-        getLogger().info("  > data: " + Arrays.toString(data));
+        if (getConfig().getBoolean("debug")) {
+            getLogger().info("Received a plugin message");
+            getLogger().info("  > channel: " + channel);
+            getLogger().info("  > player: " + player.getName());
+            getLogger().info("  > data: " + new String(data));
+        }
 
         getMessageProcessor().handleIncomingMessage(data);
     }
