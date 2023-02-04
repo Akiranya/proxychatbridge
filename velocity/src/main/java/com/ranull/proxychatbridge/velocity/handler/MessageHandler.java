@@ -12,6 +12,7 @@ import com.velocitypowered.api.proxy.server.ServerInfo;
 import net.gauntletmc.adventure.serializer.binary.BinaryComponentSerializer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -57,11 +58,11 @@ public class MessageHandler {
      * Forward the message received from a backend server to others.
      */
     public void handleOutgoingMessage(UUID player, Component message, ServerInfo source) {
-        String group = config.getGroup(source);
+        String serverGroup = config.getServerGroup(source);
         plugin.getProxy().getAllServers().stream()
             .filter(server -> !server.getPlayersConnected().isEmpty()) // exclude all empty servers
             .filter(server -> !server.getServerInfo().equals(source)) // exclude the source server itself
-            .filter(server -> config.getGroup(server.getServerInfo()).equals(group)) // select servers within the same group
+            .filter(server -> config.getServerGroup(server.getServerInfo()).equals(serverGroup)) // select servers within the same group
             .forEach(server -> {
                 @SuppressWarnings("UnstableApiUsage")
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
@@ -69,12 +70,26 @@ public class MessageHandler {
                 out.writeUTF("Global");
                 out.writeUTF(player.toString());
                 try {
-                    String format = config.getFormat(source);
-                    TagResolver resolver = TagResolver.builder().resolvers(
+                    String format = config.getMessageFormat(source);
+
+                    // construct custom MiniMessage tags
+                    TagResolver resolvers = TagResolver.builder().resolvers(
                         Placeholder.component("message", message),
-                        Placeholder.unparsed("player", plugin.getProxy().getPlayer(player).map(Player::getUsername).orElse("Null"))
+                        Placeholder.unparsed("player_name", plugin.getProxy().getPlayer(player).map(Player::getUsername).orElse("Null")),
+                        TagResolver.resolver("player_group", (queue, context) -> {
+                            int index = queue.pop().asInt().orElse(0);
+                            String groupKey = plugin.getPlayerDataProvider().getGroupProvider().groups(player).get(index);
+                            String groupValue = plugin.getConfig().getGroupValue(groupKey);
+                            return Tag.selfClosingInserting(MiniMessage.miniMessage().deserialize(groupValue));
+                        }),
+                        TagResolver.resolver("player_meta", (queue, context) -> {
+                            String metaKey = queue.pop().lowerValue();
+                            String metaValue = plugin.getPlayerDataProvider().getMetaProvider().meta(player, metaKey);
+                            return Tag.selfClosingInserting(MiniMessage.miniMessage().deserialize(metaValue));
+                        })
                     ).build();
-                    Component fullMessage = MiniMessage.miniMessage().deserialize(format, resolver);
+
+                    Component fullMessage = MiniMessage.miniMessage().deserialize(format, resolvers);
                     byte[] componentBytes = BinaryComponentSerializer.INSTANCE.serialize(fullMessage);
                     out.writeInt(componentBytes.length); // store length of the byte array
                     out.write(componentBytes);

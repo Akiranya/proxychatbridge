@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.ranull.proxychatbridge.velocity.command.ProxyChatBridgeCommand;
 import com.ranull.proxychatbridge.velocity.handler.MessageHandler;
 import com.ranull.proxychatbridge.velocity.manager.ConfigManager;
+import com.ranull.proxychatbridge.velocity.provider.PlayerDataProvider;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
@@ -37,6 +38,7 @@ public class ProxyChatBridge {
     // --- All managers ---
     private ConfigManager configManager;
     private MessageHandler messageProcessor;
+    private PlayerDataProvider playerDataProvider;
 
     @Inject
     public ProxyChatBridge(
@@ -53,10 +55,13 @@ public class ProxyChatBridge {
         container.getDescription().getDescription().ifPresent(descriptionString -> DESCRIPTION = descriptionString);
     }
 
+    // --- Listeners ---
+
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         configManager = new ConfigManager(this);
         messageProcessor = new MessageHandler(this);
+        playerDataProvider = new PlayerDataProvider(this);
 
         registerChannels();
         registerCommands();
@@ -72,17 +77,7 @@ public class ProxyChatBridge {
         unregisterChannels();
     }
 
-    private void registerChannels() {
-        getProxy().getChannelRegistrar().register(PLUGIN_MESSAGE_CHANNEL);
-    }
-
-    private void unregisterChannels() {
-        getProxy().getChannelRegistrar().unregister(PLUGIN_MESSAGE_CHANNEL);
-    }
-
-    private void registerCommands() {
-        getProxy().getCommandManager().register("proxychatbridge", new ProxyChatBridgeCommand(this));
-    }
+    // --- Getters ---
 
     public ProxyServer getProxy() {
         return server;
@@ -94,6 +89,10 @@ public class ProxyChatBridge {
 
     public MessageHandler getMessageHandler() {
         return messageProcessor;
+    }
+
+    public PlayerDataProvider getPlayerDataProvider() {
+        return playerDataProvider;
     }
 
     public File getDataFolder() {
@@ -114,6 +113,20 @@ public class ProxyChatBridge {
 
     public String getDescription() {
         return DESCRIPTION;
+    }
+
+    // --- Internal ---
+
+    private void registerChannels() {
+        getProxy().getChannelRegistrar().register(PLUGIN_MESSAGE_CHANNEL);
+    }
+
+    private void unregisterChannels() {
+        getProxy().getChannelRegistrar().unregister(PLUGIN_MESSAGE_CHANNEL);
+    }
+
+    private void registerCommands() {
+        getProxy().getCommandManager().register("proxychatbridge", new ProxyChatBridgeCommand(this));
     }
 
 }

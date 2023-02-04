@@ -58,6 +58,10 @@ public class ConfigManager {
 
     // --- Getters ---
 
+    public @NotNull String getGroupValue(String groupKey) {
+        return getConfig().getNode("group-mappings", groupKey).getString("");
+    }
+
     public boolean isDisabled(@NotNull ServerInfo serverInfo) {
         return isDisabled(serverInfo.getName());
     }
@@ -66,22 +70,22 @@ public class ConfigManager {
         return getConfig().getNode("servers", serverName).isEmpty();
     }
 
-    public @NotNull String getGroup(@NotNull ServerInfo serverInfo) {
-        return getGroup(serverInfo.getName());
+    public @NotNull String getServerGroup(@NotNull ServerInfo serverInfo) {
+        return getServerGroup(serverInfo.getName());
     }
 
-    public @NotNull String getGroup(@NotNull String serverName) {
+    public @NotNull String getServerGroup(@NotNull String serverName) {
         String group = Optional
             .ofNullable(getConfig().getNode("servers", serverName, "group").getString())
             .orElseGet(() -> getConfig().getNode("default", "group").getString());
         return requireNonNull(group);
     }
 
-    public @NotNull String getFormat(@NotNull ServerInfo serverInfo) {
-        return getFormat(serverInfo.getName());
+    public @NotNull String getMessageFormat(@NotNull ServerInfo serverInfo) {
+        return getMessageFormat(serverInfo.getName());
     }
 
-    public @NotNull String getFormat(@NotNull String serverName) {
+    public @NotNull String getMessageFormat(@NotNull String serverName) {
         String format = Optional
             .ofNullable(getConfig().getNode("servers", serverName, "format").getString())
             .orElseGet(() -> getConfig().getNode("default", "format").getString());
