@@ -2,4 +2,4 @@
 debug: false
 
 # The name of a ChatChat channel to forward messages.
-forward: 'default'
+forward: 'global'
