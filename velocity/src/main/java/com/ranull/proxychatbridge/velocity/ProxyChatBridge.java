@@ -10,6 +10,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
@@ -21,7 +22,12 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.nio.file.Path;
 
-@Plugin(id = "proxychatbridge")
+@Plugin(
+    id = "proxychatbridge",
+    dependencies = {
+        @Dependency(id = "luckperms", optional = true)
+    }
+)
 public class ProxyChatBridge {
 
     public static final ChannelIdentifier PLUGIN_MESSAGE_CHANNEL = MinecraftChannelIdentifier.create("mew", "chat");
