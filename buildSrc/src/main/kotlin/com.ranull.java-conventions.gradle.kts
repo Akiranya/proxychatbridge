@@ -7,11 +7,17 @@ plugins {
     `maven-publish`
 }
 
+group = "com.ranull"
+description = "Sync server chat across a network"
+version = "1.5"
+
 repositories {
-    mavenLocal {
-        content {}
-    }
     mavenCentral()
+    mavenLocal {
+        content {
+            includeGroup("at.helpch")
+        }
+    }
     maven("https://repo.papermc.io/repository/maven-public/") {
         content {
             includeGroup("com.velocitypowered")
@@ -38,12 +44,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:23.1.0")
+    compileOnly("org.jetbrains:annotations:24.0.0")
 }
-
-group = "com.ranull"
-description = "Sync server chat across a network"
-version = "1.5"
 
 java {
     toolchain {
