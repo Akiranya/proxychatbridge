@@ -11,7 +11,7 @@ public final class PlayerDataProvider {
 
     public PlayerDataProvider(ProxyChatBridge plugin) {
 
-        if (plugin.getProxy().getPluginManager().isLoaded("LuckPerms")) {
+        if (plugin.getProxy().getPluginManager().isLoaded("luckperms")) {
             LuckPerms luckPerms = LuckPermsProvider.get();
             groupProvider = new LuckPermsGroupProvider(luckPerms);
             metaProvider = new LuckPermsMetaProvider(luckPerms);
