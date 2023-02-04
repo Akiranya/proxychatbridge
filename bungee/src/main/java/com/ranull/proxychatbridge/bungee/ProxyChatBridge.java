@@ -1,84 +1,12 @@
 package com.ranull.proxychatbridge.bungee;
 
-import com.ranull.proxychatbridge.bungee.command.ProxyChatBridgeBungeeBroadcastCommand;
-import com.ranull.proxychatbridge.bungee.command.ProxyChatBridgeCommand;
-import com.ranull.proxychatbridge.bungee.listener.PluginMessageListener;
-import com.ranull.proxychatbridge.bungee.manager.ChatManager;
-import com.ranull.proxychatbridge.bungee.manager.ConfigManager;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.Configuration;
-
-import java.util.List;
-import java.util.UUID;
 
 public class ProxyChatBridge extends Plugin {
-    private static ProxyChatBridge instance;
-    private ConfigManager configManager;
-    private ChatManager chatManager;
-
-    public static void sendMessage(String name, String format, String message) {
-        sendMessage(name, format, message, "global");
-    }
-
-    public static void sendMessage(String name, String format, String message, String group) {
-        sendMessage(name, format, message, group, null);
-    }
-
-    public static void sendMessage(String name, String format, String message, String group, String source) {
-        sendMessage(null, name, format, message, group, source);
-    }
-
-    public static void sendMessage(UUID uuid, String name, String format, String message, String group, String source) {
-        sendMessage(uuid, name, format, message, group, source, null);
-    }
-
-    public static void sendMessage(UUID uuid, String name, String format, String message, String group, String source,
-                                   List<UUID> uuidList) {
-        instance.getChatManager().sendMessage(uuid, name, format, message, group, source, uuidList);
-    }
 
     @Override
     public void onEnable() {
-        instance = this;
-        configManager = new ConfigManager(this);
-        chatManager = new ChatManager(this);
-
-        registerChannels();
-        registerListeners();
-        registerCommands();
+        getLogger().severe("ProxyChatBridge BungeeCord support not implemented.");
     }
 
-    @Override
-    public void onDisable() {
-        unregisterChannels();
-    }
-
-    private void registerChannels() {
-        getProxy().registerChannel("BungeeCord");
-    }
-
-    private void unregisterChannels() {
-        getProxy().unregisterChannel("BungeeCord");
-    }
-
-    private void registerListeners() {
-        getProxy().getPluginManager().registerListener(this, new PluginMessageListener(this));
-    }
-
-    private void registerCommands() {
-        getProxy().getPluginManager().registerCommand(this, new ProxyChatBridgeCommand(this));
-        getProxy().getPluginManager().registerCommand(this, new ProxyChatBridgeBungeeBroadcastCommand(this));
-    }
-
-    public ChatManager getChatManager() {
-        return chatManager;
-    }
-
-    public Configuration getConfig() {
-        return configManager.getConfig();
-    }
-
-    public void reloadConfig() {
-        configManager.loadConfig();
-    }
 }

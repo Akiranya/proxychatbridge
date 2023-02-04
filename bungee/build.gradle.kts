@@ -13,7 +13,7 @@ dependencies {
 }
 
 bungee {
-    name = project.name
+    name = "ProxyChatBridge"
     version = "${project.version}"
     description = project.description
     main = "com.ranull.proxychatbridge.bungee.ProxyChatBridge"
