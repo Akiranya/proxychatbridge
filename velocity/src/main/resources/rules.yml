@@ -25,3 +25,5 @@ servers:
 group-mappings:
   default: Default Group
   advanced: Advanced Group
+
+skip-empty: false

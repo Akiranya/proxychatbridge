@@ -58,11 +58,15 @@ public class MessageHandler {
      * Forward the message received from a backend server to others.
      */
     public void handleOutgoingMessage(UUID player, Component message, ServerInfo source) {
-        String serverGroup = config.getServerGroup(source);
         plugin.getProxy().getAllServers().stream()
-            .filter(server -> !server.getPlayersConnected().isEmpty()) // exclude all empty servers
-            .filter(server -> !server.getServerInfo().equals(source)) // exclude the source server itself
-            .filter(server -> config.getServerGroup(server.getServerInfo()).equals(serverGroup)) // select servers within the same group
+
+            // exclude empty servers
+            .filter(server -> !server.getPlayersConnected().isEmpty() || config.skipEmpty())
+            // exclude the source server itself
+            .filter(server -> !server.getServerInfo().equals(source))
+            // select servers within the same group
+            .filter(server -> config.getServerGroup(server.getServerInfo()).equals(config.getServerGroup(source)))
+
             .forEach(server -> {
                 @SuppressWarnings("UnstableApiUsage")
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();

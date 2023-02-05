@@ -58,6 +58,10 @@ public class ConfigManager {
 
     // --- Getters ---
 
+    public boolean skipEmpty() {
+        return getConfig().getNode("skip-empty").getBoolean();
+    }
+
     public @NotNull String getGroupValue(String groupKey) {
         return getConfig().getNode("group-mappings", groupKey).getString("");
     }
