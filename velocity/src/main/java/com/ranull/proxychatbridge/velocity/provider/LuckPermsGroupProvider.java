@@ -27,9 +27,7 @@ public class LuckPermsGroupProvider implements GroupProvider {
         }
 
         QueryOptions queryOptions = QueryOptions.defaultContextualOptions().toBuilder().flag(Flag.RESOLVE_INHERITANCE, true).build();
-        return user.getInheritedGroups(queryOptions).stream()
-            .map(Group::getName)
-            .toList();
+        return user.getInheritedGroups(queryOptions).stream().map(Group::getName).toList();
     }
 
 }

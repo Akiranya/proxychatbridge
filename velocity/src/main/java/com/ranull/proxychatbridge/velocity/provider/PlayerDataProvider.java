@@ -4,6 +4,8 @@ import com.ranull.proxychatbridge.velocity.ProxyChatBridge;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 
+import java.util.List;
+
 public final class PlayerDataProvider {
 
     private final GroupProvider groupProvider;
@@ -15,8 +17,8 @@ public final class PlayerDataProvider {
             groupProvider = new LuckPermsGroupProvider(luckPerms);
             metaProvider = new LuckPermsMetaProvider(luckPerms);
         } else {
-            groupProvider = new EmptyGroupProvider();
-            metaProvider = new EmptyMetaProvider();
+            groupProvider = uuid -> List.of();
+            metaProvider = (uuid, key) -> "";
         }
     }
 
