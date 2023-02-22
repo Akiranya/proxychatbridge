@@ -1,6 +1,5 @@
 package com.ranull.proxychatbridge.bukkit;
 
-import com.ranull.proxychatbridge.bukkit.command.ReloadCommand;
 import com.ranull.proxychatbridge.bukkit.handler.MessageHandler;
 import com.ranull.proxychatbridge.bukkit.listener.CustomChatListener;
 import com.ranull.proxychatbridge.bukkit.listener.VanillaChatListener;
@@ -9,8 +8,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
-
-import static java.util.Objects.requireNonNull;
 
 public class ProxyChatBridge extends JavaPlugin implements PluginMessageListener {
 
@@ -27,7 +24,9 @@ public class ProxyChatBridge extends JavaPlugin implements PluginMessageListener
         registerListeners();
         registerChannels();
         registerCommands();
+
         saveDefaultConfig();
+        reloadConfig();
     }
 
     @Override
@@ -41,7 +40,9 @@ public class ProxyChatBridge extends JavaPlugin implements PluginMessageListener
     }
 
     private void registerCommands() {
-        requireNonNull(getCommand("proxychatbridgebukkit")).setExecutor(new ReloadCommand(this));
+        // TODO add it back when Paper adds the brig system
+        //  https://github.com/PaperMC/Paper/issues/8859
+        // requireNonNull(getCommand("proxychatbridgebukkit")).setExecutor(new ReloadCommand(this));
     }
 
     private void registerListeners() {
