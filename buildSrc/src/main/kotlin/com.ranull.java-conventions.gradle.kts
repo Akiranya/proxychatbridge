@@ -9,7 +9,7 @@ plugins {
 
 group = "com.ranull"
 description = "Sync server chat across a network"
-version = "1.5"
+version = "1.6"
 
 repositories {
     mavenCentral()

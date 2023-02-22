@@ -37,6 +37,17 @@ bukkit {
     }
 }
 
+tasks {
+    processResources {
+        filesMatching("**/paper-plugin.yml") {
+            expand(mapOf(
+                "version" to "${project.version}",
+                "description" to project.description
+            ))
+        }
+    }
+}
+
 java {
     withSourcesJar()
 }
