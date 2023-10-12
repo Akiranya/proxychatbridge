@@ -1,12 +1,15 @@
 package com.ranull.proxychatbridge.bukkit;
 
+import com.ranull.proxychatbridge.bukkit.command.ReloadCommand;
 import com.ranull.proxychatbridge.bukkit.handler.MessageHandler;
 import com.ranull.proxychatbridge.bukkit.listener.CustomChatListener;
 import com.ranull.proxychatbridge.bukkit.listener.VanillaChatListener;
+import com.ranull.proxychatbridge.bukkit.util.CommandMapUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+
 import org.jetbrains.annotations.NotNull;
 
 public class ProxyChatBridge extends JavaPlugin implements PluginMessageListener {
@@ -40,9 +43,15 @@ public class ProxyChatBridge extends JavaPlugin implements PluginMessageListener
     }
 
     private void registerCommands() {
-        // TODO add it back when Paper adds the brig system
-        //  https://github.com/PaperMC/Paper/issues/8859
-        // requireNonNull(getCommand("proxychatbridgebukkit")).setExecutor(new ReloadCommand(this));
+        // I just don't want to depend on "helper" for just a simple command
+        CommandMapUtil.registerCommand(
+                this,
+                new ReloadCommand(this),
+                "proxychatbridge.command.reload",
+                "You don't have permission to use this command",
+                "Reloads the configuration of ProxyChatBridge-Bukkit",
+                new String[]{"proxychatbridge"}
+        );
     }
 
     private void registerListeners() {
