@@ -12,9 +12,3 @@ dependencies {
         exclude("net.kyori")
     }
 }
-
-tasks {
-    // shadowJar {
-    //     relocate("net.gauntletmc.adventure.serializer.binary", "com.ranull.proxychatbridge.adventure.serializer.binary")
-    // }
-}
